@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ExpenseManager.Api.Repository\ExpenseManager.Api.Repository.csproj" />
     <ProjectReference Include="..\ExpenseManager.Shared\ExpenseManager.Shared.csproj" />
   </ItemGroup>

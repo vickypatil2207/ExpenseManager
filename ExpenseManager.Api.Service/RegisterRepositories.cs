@@ -1,6 +1,7 @@
 ﻿using ExpenseManager.Api.Database.Entities;
 using ExpenseManager.Api.Repository;
 using ExpenseManager.Api.Repository.Interfaces;
+using ExpenseManager.Api.Service.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace ExpenseManager.Api.Service
             services.AddScoped<IRepository<PaymentType>, Repository<PaymentType>>();
             services.AddScoped<IRepository<DefaultExpenseCategory>, Repository<DefaultExpenseCategory>>();
             services.AddScoped<IRepository<UserExpenseCategory>, Repository<UserExpenseCategory>>();
+            services.AddScoped<IRepository<Expense>, Repository<Expense>>();
         }
     }
 }

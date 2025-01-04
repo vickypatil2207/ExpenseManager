@@ -99,9 +99,19 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<PaginatedList<ExpenseCategoryModel>>> GetCategoriesByUserId(int userId, BaseSearchModel baseSearchModel)
         {
+            var paginatedList = new PaginatedList<ExpenseCategoryModel>()
+            {
+                PageIndex = baseSearchModel.PageIndex,
+                PageSize = baseSearchModel.PageSize,
+                SortColumn = baseSearchModel.SortColumn,
+                SortOrder = baseSearchModel.SortOrder
+            };
+
             var counts = await _userExpenseCategoryRepository.CountAsync(uec => uec.UserId == userId);
             if (counts > 0)
             {
+                paginatedList.TotalCount = counts;
+
                 var expenseCategoryList = await _userExpenseCategoryRepository.SearchAsync((uec => uec.UserId == userId), 
                                     baseSearchModel.PageIndex, 
                                     baseSearchModel.PageSize, 
@@ -109,7 +119,6 @@ namespace ExpenseManager.Api.Service
                                     baseSearchModel.SortOrder);
                 if (expenseCategoryList.Any())
                 {
-                    var paginatedList = new PaginatedList<ExpenseCategoryModel>(counts, baseSearchModel);
                     paginatedList.Items = expenseCategoryList.Select(e => ExpenseCategoryMapper.MapToExpenseCategoryModel(e));
                     return ServiceResult<PaginatedList<ExpenseCategoryModel>>.Ok(paginatedList);
                 }

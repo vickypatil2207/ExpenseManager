@@ -16,6 +16,7 @@ namespace ExpenseManager.Api.Repository.Interfaces
         Task<bool> DeleteAsync(T item);
         Task<bool> DeleteRangeAsync(IEnumerable<T> items);
         Task<T?> GetByIdAsync(int id);
+        Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includeProperties);
         Task<IEnumerable<T>> GetListAsync();
         Task<int> CountAsync(Expression<Func<T, bool>> predicate);
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
@@ -23,5 +24,6 @@ namespace ExpenseManager.Api.Repository.Interfaces
         Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize);
         Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn);
         Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn, string sortOrder);
+        Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn, string sortOrder, params Expression<Func<T, object>>[]? includeProperties);
     }
 }

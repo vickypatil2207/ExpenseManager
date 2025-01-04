@@ -64,6 +64,23 @@ namespace ExpenseManager.Api.Repository
             return await _expenseManagerDBContext.FindAsync<T>(id);
         }
 
+        public async Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includeProperties)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            if (entity == null)
+            {
+                return entity;
+            }
+
+            IQueryable<T> query = _dbSet;
+            if (includeProperties != null && includeProperties.Any())
+            {
+                query = IncludeProperties(query, includeProperties);
+            }
+            
+            return await query.FirstOrDefaultAsync(e => e == entity);
+        }
+
         public async Task<IEnumerable<T>> GetListAsync()
         {
             return await _dbSet.ToListAsync();
@@ -97,7 +114,19 @@ namespace ExpenseManager.Api.Repository
 
         public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn, string sortOrder)
         {
-            IQueryable<T> query = _dbSet.Where(predicate);
+            return await SearchAsync(predicate, pageIndex, pageSize, sortColumn, sortOrder, null);
+        }
+
+        public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn, string sortOrder, params Expression<Func<T, object>>[]? includeProperties)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (includeProperties != null && includeProperties.Any())
+            {
+                query = IncludeProperties(query, includeProperties);
+            }
+
+            query = query.Where(predicate);
 
             if (string.IsNullOrWhiteSpace(sortColumn) && pageIndex == 0)
             {
@@ -110,22 +139,18 @@ namespace ExpenseManager.Api.Repository
             }
 
             var parameter = Expression.Parameter(typeof(T), "x");
-            var property = Expression.Property(parameter, sortColumn);
+            Expression property = parameter;
+            foreach (var member in sortColumn.Split('.'))
+            {
+                property = Expression.PropertyOrField(property, member);
+            }
             var lambda = Expression.Lambda(property, parameter);
 
+            string methodName = sortOrder.Equals("desc", StringComparison.OrdinalIgnoreCase) ? "OrderByDescending" : "OrderBy";
             var typeArgs = new Type[] { typeof(T), property.Type };
             var method = typeof(Queryable).GetMethods()
-                .Where(m => m.Name == "OrderBy" && m.IsGenericMethod)
-                .First()
-                .MakeGenericMethod(typeArgs);
-
-            if (sortOrder.ToLower() == "desc")
-            {
-                method = typeof(Queryable).GetMethods()
-                    .Where(m => m.Name == "OrderByDescending" && m.IsGenericMethod)
-                    .First()
-                    .MakeGenericMethod(typeArgs);
-            }
+                .First(m => m.Name == methodName && m.GetParameters().Length == 2)
+                .MakeGenericMethod(typeof(T), property.Type);
 
             var newQuery = (IQueryable<T>?)method.Invoke(null, new object[] { query, lambda });
             if (newQuery == null)
@@ -139,6 +164,16 @@ namespace ExpenseManager.Api.Repository
             }
                         
             return await newQuery.ToListAsync();
+        }
+
+        private IQueryable<T> IncludeProperties(IQueryable<T> query, params Expression<Func<T, object>>[] includeProperties)
+        {
+            foreach (var property in includeProperties)
+            {
+                query = query.Include(property);
+            }
+
+            return query;
         }
     }
 }
