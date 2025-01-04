@@ -55,6 +55,9 @@ namespace ExpenseManager.Api.Database
             builder.Property(u => u.DateOfBirth).HasColumnType("date");
             builder.Property(u => u.Gender).IsRequired().HasColumnType("char").HasMaxLength(1);
             builder.Property(u => u.RegistrationDate).HasColumnType("datetime2");
+
+            builder.HasIndex(u => u.Email).IsUnique();
+            builder.HasIndex(u => u.Username).IsUnique();
         }
 
         private void ConfigurePaymentType(EntityTypeBuilder<PaymentType> builder)

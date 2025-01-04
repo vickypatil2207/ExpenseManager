@@ -198,6 +198,20 @@ namespace ExpenseManager.Api.Database.Migrations
                 schema: "dbo",
                 table: "UserExpenseCategories",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                schema: "dbo",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Username",
+                schema: "dbo",
+                table: "Users",
+                column: "Username",
+                unique: true);
         }
 
         /// <inheritdoc />

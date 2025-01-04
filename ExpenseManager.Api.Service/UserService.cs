@@ -23,6 +23,18 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<UserModel>> CreateUser(UserModel userModel)
         {
+            var usernameAlreadyPresent = await _userRepositry.FirstOrDefaultAsync(u => u.Username.ToLower() == userModel.Username.ToLower());
+            if (usernameAlreadyPresent != null)
+            {
+                return ServiceResult<UserModel>.Fail($"User Already Present for Username = {userModel.Username}!", UserMapper.MapToUserModel(usernameAlreadyPresent));
+            }
+
+            var emailAlreadyPresnet = await _userRepositry.FirstOrDefaultAsync(u => u.Email.ToLower() == userModel.Email.ToLower());
+            if (emailAlreadyPresnet != null)
+            {
+                return ServiceResult<UserModel>.Fail($"User Already Present for Email = {userModel.Email}!", UserMapper.MapToUserModel(emailAlreadyPresnet));
+            }
+
             var user = UserMapper.MapToUserEntity(userModel);
             user.Password = HashHelper.ComputeHash(userModel.Password);
 
@@ -41,7 +53,7 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<UserModel>> UpdateUser(int id, UserModel userModel)
         {
-            var userResult = _userRepositry.FirstOrDefault(u => u.Id == id && u.IsActive);
+            var userResult = await _userRepositry.FirstOrDefaultAsync(u => u.Id == id && u.IsActive);
             if (userResult != null)
             {
                 UserMapper.MapToUserEntity(userModel, ref userResult);
@@ -61,7 +73,7 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<UserModel>> DeactivateUser(int id)
         {
-            var userResult = _userRepositry.FirstOrDefault(u => u.Id == id && u.IsActive);
+            var userResult = await _userRepositry.FirstOrDefaultAsync(u => u.Id == id && u.IsActive);
             if (userResult != null)
             {
                 userResult.IsActive = false;
@@ -81,7 +93,7 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<UserModel>> GetUserById(int id)
         {
-            var userResult = _userRepositry.FirstOrDefault(u => u.Id == id && u.IsActive);
+            var userResult = await _userRepositry.FirstOrDefaultAsync(u => u.Id == id && u.IsActive);
             if (userResult != null)
             {
                 return ServiceResult<UserModel>.Ok(UserMapper.MapToUserModel(userResult));
@@ -92,14 +104,12 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<UserModel>> SignIn(SigninModel signinModel)
         {
-            var searchResult = _userRepositry.Search(u => (u.Username.ToLower() == signinModel.Username.ToLower() 
+            var userResult = await _userRepositry.FirstOrDefaultAsync(u => (u.Username.ToLower() == signinModel.Username.ToLower()
                             || u.Email.ToLower() == signinModel.Username.ToLower())
-                        && HashHelper.VerifyHash(signinModel.Password, u.Password)
                         && u.IsActive);
-            if (searchResult != null && searchResult.Any())
+            if (userResult != null && HashHelper.VerifyHash(signinModel.Password, userResult.Password))
             {
-                var user = searchResult.First();
-                return ServiceResult<UserModel>.Ok(UserMapper.MapToUserModel(user));
+                return ServiceResult<UserModel>.Ok(UserMapper.MapToUserModel(userResult));
             }
 
             return ServiceResult<UserModel>.Fail($"Could not find user details for Username = {signinModel.Username} & Password = {signinModel.Password}!");

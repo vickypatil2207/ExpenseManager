@@ -69,29 +69,29 @@ namespace ExpenseManager.Api.Repository
             return await _dbSet.ToListAsync();
         }
 
-        public T? FirstOrDefault(Func<T, bool> predicate)
+        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
-            var list = Search(predicate);
+            var list = await SearchAsync(predicate);
             return list.FirstOrDefault();
         }
 
-        public IEnumerable<T> Search(Func<T, bool> predicate)
+        public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate)
         {
-            return Search(predicate, string.Empty, string.Empty);
+            return await SearchAsync(predicate, string.Empty, string.Empty);
         }
 
-        public IEnumerable<T> Search(Func<T, bool> predicate, string sortColumn)
+        public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, string sortColumn)
         {
-            return Search(predicate, sortColumn, "asc");
+            return await SearchAsync(predicate, sortColumn, "asc");
         }
 
-        public IEnumerable<T> Search(Func<T, bool> predicate, string sortColumn, string sortOrder)
+        public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, string sortColumn, string sortOrder)
         {
-            IQueryable<T> query = _dbSet.Where(predicate).AsQueryable();
+            IQueryable<T> query = _dbSet.Where(predicate);
 
             if (string.IsNullOrWhiteSpace(sortColumn))
             {
-                return query.ToList();
+                return await query.ToListAsync();
             }
 
             var parameter = Expression.Parameter(typeof(T), "x");
@@ -116,7 +116,7 @@ namespace ExpenseManager.Api.Repository
             if (newQuery == null)
                 throw new ApplicationException("Search Query resulted to null, cannot execute query!");
 
-            return newQuery.ToList();
+            return await newQuery.ToListAsync();
         }
     }
 }
