@@ -14,6 +14,7 @@ namespace ExpenseManager.Api
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPaymentTypeService, PaymentTypeService>();
+            services.AddScoped<IExpenseCategoryService, ExpenseCategoryService>();
 
             RegisterRepositories.Register(services);
         }

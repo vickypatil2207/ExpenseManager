@@ -17,9 +17,11 @@ namespace ExpenseManager.Api.Repository.Interfaces
         Task<bool> DeleteRangeAsync(IEnumerable<T> items);
         Task<T?> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetListAsync();
+        Task<int> CountAsync(Expression<Func<T, bool>> predicate);
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate);
-        Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, string sortColumn);
-        Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, string sortColumn, string sortOrder);
+        Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize);
+        Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn);
+        Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn, string sortOrder);
     }
 }

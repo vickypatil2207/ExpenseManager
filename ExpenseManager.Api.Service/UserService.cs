@@ -16,9 +16,11 @@ namespace ExpenseManager.Api.Service
     public class UserService : IUserService
     {
         private readonly IRepository<User> _userRepositry;
-        public UserService(IRepository<User> userRepository)
+        private readonly IExpenseCategoryService _expenseCategoryService;
+        public UserService(IRepository<User> userRepository, IExpenseCategoryService expenseCategoryService)
         {
             _userRepositry = userRepository;
+            _expenseCategoryService = expenseCategoryService;
         }
 
         public async Task<ServiceResult<UserModel>> CreateUser(UserModel userModel)
@@ -41,6 +43,8 @@ namespace ExpenseManager.Api.Service
             var result = await _userRepositry.CreateAsync(user);
             if (result.Id > 0)
             {
+                await _expenseCategoryService.CreateCategoriesForUserSignup(result.Id); // Create User expense categories while user sign up.
+
                 var userCreated = await _userRepositry.GetByIdAsync(result.Id);
                 if (userCreated != null)
                 {

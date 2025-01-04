@@ -16,6 +16,8 @@ namespace ExpenseManager.Api.Service
         {
             services.AddScoped<IRepository<User>, Repository<User>>();
             services.AddScoped<IRepository<PaymentType>, Repository<PaymentType>>();
+            services.AddScoped<IRepository<DefaultExpenseCategory>, Repository<DefaultExpenseCategory>>();
+            services.AddScoped<IRepository<UserExpenseCategory>, Repository<UserExpenseCategory>>();
         }
     }
 }

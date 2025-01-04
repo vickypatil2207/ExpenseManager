@@ -8,13 +8,6 @@ namespace ExpenseManager.Api.Database.Entities
 {
     public class Expense
     {
-        public Expense()
-        {
-            User = new User();
-            UserExpenseCategory = new UserExpenseCategory();
-            PaymentType = new PaymentType();
-        }
-
         public int Id { get; set; }
         public int UserId { get; set; }
         public int UserExpenseCategoryId { get; set; }
@@ -25,8 +18,8 @@ namespace ExpenseManager.Api.Database.Entities
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? ModifiedDate { get; set; }
 
-        public User User { get; set; }
-        public UserExpenseCategory UserExpenseCategory { get; set; }
-        public PaymentType PaymentType { get; set; }
+        public User? User { get; set; }
+        public UserExpenseCategory? UserExpenseCategory { get; set; }
+        public PaymentType? PaymentType { get; set; }
     }
 }
