@@ -48,5 +48,29 @@ namespace ExpenseManager.Api.Service.Mapper
                 IsActive = user.IsActive,
             };
         }
+
+        public static TokenModel MapToTokenModel(string token, UserModel userModel)
+        {
+            return new TokenModel()
+            {
+                Token = token,
+                UserDetails = userModel
+            };
+        }
+
+        public static TokenModel MapToTokenModel(UserModel userModel)
+        {
+            return MapToTokenModel(string.Empty, userModel);
+        }
+
+        public static TokenModel MapToTokenModel(string token, User user)
+        {
+            return MapToTokenModel(token, MapToUserModel(user));
+        }
+
+        public static TokenModel MapToTokenModel(User user)
+        {
+            return MapToTokenModel(string.Empty, MapToUserModel(user));
+        }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using ExpenseManager.Api.Service.Interfaces;
 using ExpenseManager.Shared.Models;
 using ExpenseManager.Shared.Models.SearchModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseManager.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ExpenseCategoryController : ControllerBase

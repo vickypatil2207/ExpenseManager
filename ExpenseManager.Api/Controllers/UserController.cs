@@ -1,10 +1,12 @@
 ﻿using ExpenseManager.Api.Service.Interfaces;
 using ExpenseManager.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseManager.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -16,6 +18,7 @@ namespace ExpenseManager.Api.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody]UserModel userModel)
         {
@@ -56,6 +59,7 @@ namespace ExpenseManager.Api.Controllers
             return BadRequest(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn(SigninModel signInModel)
         {

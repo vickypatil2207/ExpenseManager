@@ -17,24 +17,29 @@ namespace ExpenseManager.Api.Service
     {
         private readonly IRepository<User> _userRepositry;
         private readonly IExpenseCategoryService _expenseCategoryService;
-        public UserService(IRepository<User> userRepository, IExpenseCategoryService expenseCategoryService)
+        private readonly ITokenService _tokenService;
+
+        public UserService(IRepository<User> userRepository, 
+                IExpenseCategoryService expenseCategoryService,
+                ITokenService tokenService)
         {
             _userRepositry = userRepository;
             _expenseCategoryService = expenseCategoryService;
+            _tokenService = tokenService;
         }
 
-        public async Task<ServiceResult<UserModel>> CreateUser(UserModel userModel)
+        public async Task<ServiceResult<TokenModel>> CreateUser(UserModel userModel)
         {
             var usernameAlreadyPresent = await _userRepositry.FirstOrDefaultAsync(u => u.Username.ToLower() == userModel.Username.ToLower());
             if (usernameAlreadyPresent != null)
             {
-                return ServiceResult<UserModel>.Fail($"User Already Present for Username = {userModel.Username}!", UserMapper.MapToUserModel(usernameAlreadyPresent));
+                return ServiceResult<TokenModel>.Fail($"User Already Present for Username = {userModel.Username}!", UserMapper.MapToTokenModel(usernameAlreadyPresent));
             }
 
             var emailAlreadyPresnet = await _userRepositry.FirstOrDefaultAsync(u => u.Email.ToLower() == userModel.Email.ToLower());
             if (emailAlreadyPresnet != null)
             {
-                return ServiceResult<UserModel>.Fail($"User Already Present for Email = {userModel.Email}!", UserMapper.MapToUserModel(emailAlreadyPresnet));
+                return ServiceResult<TokenModel>.Fail($"User Already Present for Email = {userModel.Email}!", UserMapper.MapToTokenModel(emailAlreadyPresnet));
             }
 
             var user = UserMapper.MapToUserEntity(userModel);
@@ -48,11 +53,17 @@ namespace ExpenseManager.Api.Service
                 var userCreated = await _userRepositry.GetByIdAsync(result.Id);
                 if (userCreated != null)
                 {
-                    return ServiceResult<UserModel>.Ok(UserMapper.MapToUserModel(userCreated));
+                    var userDetails = UserMapper.MapToUserModel(userCreated);
+                    var token = new TokenModel()
+                    {
+                        Token = _tokenService.GenerateToken(userModel),
+                        UserDetails = userModel
+                    };
+                    return ServiceResult<TokenModel>.Ok(token);
                 }
             }
 
-            return ServiceResult<UserModel>.Fail("Something went wrong saving user details!", userModel);
+            return ServiceResult<TokenModel>.Fail("Something went wrong saving user details!", UserMapper.MapToTokenModel(userModel));
         }
 
         public async Task<ServiceResult<UserModel>> UpdateUser(int id, UserModel userModel)
@@ -106,17 +117,23 @@ namespace ExpenseManager.Api.Service
             return ServiceResult<UserModel>.Fail($"Could not find user details for Id = {id}!");
         }
 
-        public async Task<ServiceResult<UserModel>> SignIn(SigninModel signinModel)
+        public async Task<ServiceResult<TokenModel>> SignIn(SigninModel signinModel)
         {
             var userResult = await _userRepositry.FirstOrDefaultAsync(u => (u.Username.ToLower() == signinModel.Username.ToLower()
                             || u.Email.ToLower() == signinModel.Username.ToLower())
                         && u.IsActive);
             if (userResult != null && HashHelper.VerifyHash(signinModel.Password, userResult.Password))
             {
-                return ServiceResult<UserModel>.Ok(UserMapper.MapToUserModel(userResult));
+                var userModel = UserMapper.MapToUserModel(userResult);
+                var token = new TokenModel()
+                {
+                    Token = _tokenService.GenerateToken(userModel),
+                    UserDetails = userModel
+                };
+                return ServiceResult<TokenModel>.Ok(token);
             }
 
-            return ServiceResult<UserModel>.Fail($"Could not find user details for Username = {signinModel.Username} & Password = {signinModel.Password}!");
+            return ServiceResult<TokenModel>.Fail($"Could not find user details for Username = {signinModel.Username} & Password = {signinModel.Password}!");
         }
     }
 }
