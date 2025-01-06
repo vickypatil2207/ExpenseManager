@@ -88,7 +88,7 @@ namespace ExpenseManager.Api.Middlewares
                 action = (objAction?.ToString() ?? string.Empty).ToLower();
             }
 
-            if (controller == "user" && (string.IsNullOrWhiteSpace(action) || action.Contains("singup") || action.Contains("signin")))
+            if (controller == "user" && (string.IsNullOrWhiteSpace(action) || action.Contains("signup") || action.Contains("signin")))
             {
                 return true;
             }

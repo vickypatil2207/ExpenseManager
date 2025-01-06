@@ -2,6 +2,7 @@
 using ExpenseManager.Api.Service;
 using ExpenseManager.Api.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -77,6 +78,29 @@ namespace ExpenseManager.Api
                         new string[] { }
                     }
                 });
+            });
+        }
+
+        public static void ConfigureApiBehaviourOptions(this IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Where(e => e.Value.Errors.Count > 0)
+                        .SelectMany(x => x.Value.Errors.Select(e => e.ErrorMessage))
+                        .ToList();
+
+                    var response = new
+                    {
+                        success = false,
+                        messages = errors,
+                        item = (object)null
+                    };
+
+                    return new BadRequestObjectResult(response);
+                };
             });
         }
     }

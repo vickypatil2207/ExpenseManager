@@ -1,7 +1,5 @@
 using ExpenseManager.Api;
 using ExpenseManager.Api.Middlewares;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +13,7 @@ builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDatabase(builder.Configuration);
 builder.Services.ConfigureServices();
 builder.Services.ConfigureAuthentication(builder.Configuration);
+builder.Services.ConfigureApiBehaviourOptions();
 
 var app = builder.Build();
 
