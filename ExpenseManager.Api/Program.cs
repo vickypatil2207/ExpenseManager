@@ -1,4 +1,5 @@
 using ExpenseManager.Api;
+using ExpenseManager.Api.Middlewares;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -26,7 +27,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<UserAuthorizationMiddleware>();
+
 app.MapControllers();
 
 app.Run();
