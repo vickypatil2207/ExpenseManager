@@ -30,10 +30,9 @@ namespace ExpenseManager.Api.Service
             var result = await _expenseRepository.CreateAsync(expense);
             if (result.Id > 0)
             {
-                var expenseCreated = await _expenseRepository.GetByIdAsync(result.Id, e => e.UserExpenseCategory, e => e.PaymentType);
-                if (expenseCreated != null)
+                if (await _expenseRepository.GetByIdAsync(result.Id, e => e.UserExpenseCategory, e => e.PaymentType) is Expense expenseCreated)
                 {
-                    return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseCreated));
+                    return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseCreated)!);
                 }
             }
 
@@ -42,16 +41,14 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<ExpenseModel>> UpdateExpense(int id, ExpenseModel expenseModel)
         {
-            var expenseResult = await _expenseRepository.GetByIdAsync(id);
-            if (expenseResult != null)
+            if (await _expenseRepository.GetByIdAsync(id) is Expense expenseResult)
             {
                 ExpenseMapper.MapToExpense(expenseModel, ref expenseResult);
                 await _expenseRepository.UpdateAsync(expenseResult);
 
-                var expenseUpdated = await _expenseRepository.GetByIdAsync(id, e => e.UserExpenseCategory, e => e.PaymentType);
-                if (expenseUpdated != null)
+                if (await _expenseRepository.GetByIdAsync(id, e => e.UserExpenseCategory, e => e.PaymentType) is Expense expenseUpdated)
                 {
-                    return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseUpdated));
+                    return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseUpdated)!);
                 }
             }
 
@@ -60,11 +57,10 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<ExpenseModel>> DeleteExpense(int id)
         {
-            var expenseResult = await _expenseRepository.GetByIdAsync(id, e => e.UserExpenseCategory, e => e.PaymentType);
-            if (expenseResult != null)
+            if (await _expenseRepository.GetByIdAsync(id, e => e.UserExpenseCategory, e => e.PaymentType) is Expense expenseResult)
             {   
                 await _expenseRepository.DeleteAsync(expenseResult);
-                return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseResult));
+                return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseResult)!);
             }
 
             return ServiceResult<ExpenseModel>.Fail($"Could not find expense details for Id = {id}!");
@@ -72,10 +68,9 @@ namespace ExpenseManager.Api.Service
 
         public async Task<ServiceResult<ExpenseModel>> GetExpenseById(int id)
         {
-            var expenseResult = await _expenseRepository.GetByIdAsync(id, e => e.UserExpenseCategory, e => e.PaymentType);
-            if (expenseResult != null)
+            if (await _expenseRepository.GetByIdAsync(id, e => e.UserExpenseCategory, e => e.PaymentType) is Expense expenseResult)
             {
-                return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseResult));
+                return ServiceResult<ExpenseModel>.Ok(ExpenseMapper.MapToExpenseModel(expenseResult)!);
             }
 
             return ServiceResult<ExpenseModel>.Fail($"Could not find expense details for Id = {id}!");
@@ -106,7 +101,7 @@ namespace ExpenseManager.Api.Service
                 if (expenseResult.Any())
                 {
                     paginatedList.Items = expenseResult.Select(e => ExpenseMapper.MapToExpenseModel(e));
-                    return ServiceResult<PaginatedList<ExpenseModel>>.Ok(paginatedList);
+                    return ServiceResult<PaginatedList<ExpenseModel>>.Ok(paginatedList!);
                 }
             }
 

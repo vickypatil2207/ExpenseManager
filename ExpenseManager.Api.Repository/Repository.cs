@@ -64,7 +64,7 @@ namespace ExpenseManager.Api.Repository
             return await _expenseManagerDBContext.FindAsync<T>(id);
         }
 
-        public async Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includeProperties)
+        public async Task<T?> GetByIdAsync(int id, params Expression<Func<T, object?>>[] includeProperties)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null)
@@ -117,7 +117,7 @@ namespace ExpenseManager.Api.Repository
             return await SearchAsync(predicate, pageIndex, pageSize, sortColumn, sortOrder, null);
         }
 
-        public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn, string sortOrder, params Expression<Func<T, object>>[]? includeProperties)
+        public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate, int pageIndex, int pageSize, string sortColumn, string sortOrder, params Expression<Func<T, object?>>[]? includeProperties)
         {
             IQueryable<T> query = _dbSet;
 
@@ -166,7 +166,7 @@ namespace ExpenseManager.Api.Repository
             return await newQuery.ToListAsync();
         }
 
-        private IQueryable<T> IncludeProperties(IQueryable<T> query, params Expression<Func<T, object>>[] includeProperties)
+        private IQueryable<T> IncludeProperties(IQueryable<T> query, params Expression<Func<T, object?>>[] includeProperties)
         {
             foreach (var property in includeProperties)
             {

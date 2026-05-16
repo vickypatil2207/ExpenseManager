@@ -29,10 +29,10 @@ namespace ExpenseManager.Shared
 
         public static ServiceResult<T> Fail(IEnumerable<string> messages)
         {
-            return Fail(messages);
+            return Fail(messages, null);
         }
 
-        public static ServiceResult<T> Fail(string message, T item)
+        public static ServiceResult<T> Fail(string message, T? item)
         {
             return Fail(new List<string>() { message }, item);
         }

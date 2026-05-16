@@ -32,18 +32,21 @@ namespace ExpenseManager.Api
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
+            var jwtKey = configuration["Jwt:Key"] ?? string.Empty;
+            var jwtIssuer = configuration["Jwt:Issuer"] ?? string.Empty;
+            var jwtAudience = configuration["Jwt:Audience"] ?? string.Empty;
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(option =>
                 {
-                    var jwtKey = configuration["Jwt:Key"] ?? string.Empty;
                     option.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
-                        ValidIssuer = configuration["Jwt:Issuer"],
-                        ValidAudience = configuration["Jwt:Audience"],
+                        ValidIssuer = jwtIssuer,
+                        ValidAudience = jwtAudience,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
                     };
                 });
@@ -88,15 +91,15 @@ namespace ExpenseManager.Api
                 options.InvalidModelStateResponseFactory = context =>
                 {
                     var errors = context.ModelState
-                        .Where(e => e.Value.Errors.Count > 0)
-                        .SelectMany(x => x.Value.Errors.Select(e => e.ErrorMessage))
-                        .ToList();
+                    .Where(e => e.Value?.Errors.Count > 0)
+                    .SelectMany(x => x.Value?.Errors.Select(e => e.ErrorMessage) ?? Enumerable.Empty<string>())
+                    .ToList();
 
                     var response = new
                     {
                         success = false,
                         messages = errors,
-                        item = (object)null
+                        item = (object?)null
                     };
 
                     return new BadRequestObjectResult(response);

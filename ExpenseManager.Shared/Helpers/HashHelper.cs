@@ -11,12 +11,9 @@ namespace ExpenseManager.Shared.Helpers
     {
         public static string ComputeHash(string normalText, int workFactor = 10)
         {
-            using (var rfc2898 = new Rfc2898DeriveBytes(normalText, 16, 10000, HashAlgorithmName.SHA256))
-            {
-                var salt = rfc2898.Salt;
-                var hash = rfc2898.GetBytes(32);
-                return Convert.ToBase64String(salt) + ":" + Convert.ToBase64String(hash);
-            }
+            var salt = RandomNumberGenerator.GetBytes(16);
+            var hash = Rfc2898DeriveBytes.Pbkdf2(normalText, salt, 10000, HashAlgorithmName.SHA256, 32);
+            return Convert.ToBase64String(salt) + ":" + Convert.ToBase64String(hash);
         }
 
         public static bool VerifyHash(string normalText, string hashedText)
@@ -25,11 +22,8 @@ namespace ExpenseManager.Shared.Helpers
             var salt = Convert.FromBase64String(parts[0]);
             var hash = Convert.FromBase64String(parts[1]);
 
-            using (var rfc2898 = new Rfc2898DeriveBytes(normalText, salt, 10000, HashAlgorithmName.SHA256))
-            {
-                var computedHash = rfc2898.GetBytes(32);
-                return computedHash.SequenceEqual(hash);
-            }
+            var computedHash = Rfc2898DeriveBytes.Pbkdf2(normalText, salt, 10000, HashAlgorithmName.SHA256, 32);
+            return computedHash.SequenceEqual(hash);
         }
     }
 }
