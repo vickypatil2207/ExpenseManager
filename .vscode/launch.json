@@ -1,0 +1,26 @@
+{ 
+    "version": "0.2.0", 
+    "compounds": [ 
+        { 
+            "name": "Run API + Blazor", 
+            "configurations": [ 
+                "Launch API", 
+                "Launch Blazor" 
+            ]
+        } 
+    ], 
+    "configurations": [ 
+        { 
+            "name": "Launch API", 
+            "type": "dotnet", 
+            "request": "launch", 
+            "projectPath": "${workspaceFolder}/ExpenseManager.Api/ExpenseManager.Api.csproj" 
+        }, 
+        { 
+            "name": "Launch Blazor", 
+            "type": "dotnet", 
+            "request": "launch", 
+            "projectPath": "${workspaceFolder}/ExpenseManager.Web/ExpenseManager.Web.csproj" 
+        } 
+    ] 
+}
