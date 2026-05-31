@@ -14,7 +14,7 @@
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
             </div>
         </div>
-        <button type="button" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+        <button type="button" class="btn btn-primary" @onclick="NavigateToAdd"><i class="fas fa-plus"></i> Add</button>
     </div>
 </div>
 
@@ -58,4 +58,12 @@
         : categories.Where(c => 
             c.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
             c.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    private void NavigateToAdd()
+    {
+        Navigation.NavigateTo("/categories/createoredit");
+    }
 }
