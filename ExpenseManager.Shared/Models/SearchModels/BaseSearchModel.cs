@@ -8,9 +8,10 @@ namespace ExpenseManager.Shared.Models.SearchModels
 {
     public class BaseSearchModel
     {
-        public int PageIndex { get; set; }
-        public int PageSize { get; set; }
+        public int PageIndex { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
         public string SortColumn { get; set; } = string.Empty;
         public string SortOrder { get; set; } = "asc";
+        public string SearchText { get; set; } = string.Empty;
     }
 }

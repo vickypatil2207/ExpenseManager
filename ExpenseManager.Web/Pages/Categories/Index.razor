@@ -1,5 +1,5 @@
 @page "/categories"
-@using ExpenseManager.Shared.Models
+@using ExpenseManager.Shared.Models.SearchModels
 
 <PageTitle>Categories</PageTitle>
 
@@ -10,7 +10,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <div class="col-4">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search categories..." @bind="searchText" @bind:event="oninput">
+                <input type="text" class="form-control" placeholder="Search categories..." @bind="SearchModel.SearchText" @bind:event="oninput">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
             </div>
         </div>
@@ -29,9 +29,9 @@
             </tr>
         </thead>
         <tbody>
-            @if (categories != null && categories.Any())
+            @if (ExpenseCategories != null && ExpenseCategories.Items != null && ExpenseCategories.Items.Any())
             {
-                @foreach (var category in filteredCategories)
+                @foreach (var category in ExpenseCategories.Items)
                 {
                     <tr>
                         <td>@category.Id</td>
@@ -49,21 +49,3 @@
         </tbody>
     </table>
 </div>
-
-@code {
-    private string searchText = string.Empty;
-    private List<ExpenseCategoryModel> categories = new();
-    private List<ExpenseCategoryModel> filteredCategories => string.IsNullOrWhiteSpace(searchText)
-        ? categories
-        : categories.Where(c => 
-            c.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-            c.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
-
-    [Inject]
-    private NavigationManager Navigation { get; set; } = default!;
-
-    private void NavigateToAdd()
-    {
-        Navigation.NavigateTo("/categories/createoredit");
-    }
-}

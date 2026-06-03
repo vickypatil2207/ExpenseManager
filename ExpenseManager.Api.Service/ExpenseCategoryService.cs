@@ -112,7 +112,8 @@ namespace ExpenseManager.Api.Service
             {
                 paginatedList.TotalCount = counts;
 
-                var expenseCategoryList = await _userExpenseCategoryRepository.SearchAsync((uec => uec.UserId == userId), 
+                var expenseCategoryList = await _userExpenseCategoryRepository.SearchAsync((uec => uec.UserId == userId 
+                                        && (string.IsNullOrEmpty(baseSearchModel.SearchText) || uec.Title.Contains(baseSearchModel.SearchText))), 
                                     baseSearchModel.PageIndex, 
                                     baseSearchModel.PageSize, 
                                     baseSearchModel.SortColumn, 

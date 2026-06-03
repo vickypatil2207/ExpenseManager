@@ -15,6 +15,16 @@ builder.Services.ConfigureServices();
 builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.ConfigureApiBehaviourOptions();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("BlazorPolicy", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,9 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-
+app.UseCors("BlazorPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
