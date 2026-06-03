@@ -107,7 +107,8 @@ namespace ExpenseManager.Api.Service
                 SortOrder = baseSearchModel.SortOrder
             };
 
-            var counts = await _userExpenseCategoryRepository.CountAsync(uec => uec.UserId == userId);
+            var counts = await _userExpenseCategoryRepository.CountAsync(uec => uec.UserId == userId 
+                                        && (string.IsNullOrEmpty(baseSearchModel.SearchText) || uec.Title.Contains(baseSearchModel.SearchText)));
             if (counts > 0)
             {
                 paginatedList.TotalCount = counts;

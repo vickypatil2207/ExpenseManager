@@ -31,8 +31,7 @@ namespace ExpenseManager.Web.Pages.Categories
         {
             var userId = 1;
             var result = await ExpenseCategoryService.GetCategoriesByUserId(userId, SearchModel);
-            if (result.Success)
-                ExpenseCategories = result.Item ?? new PaginatedList<ExpenseCategoryModel>();
+            ExpenseCategories = result.Item ?? new PaginatedList<ExpenseCategoryModel>();
         }
 
         private async Task SearchCategories()
@@ -76,6 +75,7 @@ namespace ExpenseManager.Web.Pages.Categories
                 var result = await ExpenseCategoryService.DeleteCategory(CategoryToDelete.Id);
                 if (result.Success)
                 {
+                    SearchModel.PageIndex = (int)Math.Ceiling((ExpenseCategories.TotalCount - 1) / Convert.ToDouble(SearchModel.PageSize));
                     await LoadCategories();
                 }
             }

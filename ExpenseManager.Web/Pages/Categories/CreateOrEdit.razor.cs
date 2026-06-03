@@ -37,6 +37,7 @@ namespace ExpenseManager.Web.Pages.Categories
             }
             else
             {
+                categoryModel.UserId = 1; // Replace with actual user ID from authentication context
                 await ExpenseCategoryService.CreateCategory(categoryModel);
             }
             Navigation.NavigateTo("/categories");

@@ -24,7 +24,7 @@ namespace ExpenseManager.Api.Middlewares
                     return;
                 }
 
-                var userIdFromRequest = GetUserIdFromRequest(context);
+                var userIdFromRequest = await GetUserIdFromRequest(context);
                 if (!string.IsNullOrWhiteSpace(userIdFromRequest) && userIdFromRequest != userIdClaim)
                 {
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -36,7 +36,7 @@ namespace ExpenseManager.Api.Middlewares
             await _next(context);
         }
 
-        private string GetUserIdFromRequest(HttpContext context)
+        private async Task<string> GetUserIdFromRequest(HttpContext context)
         {
             string controller = string.Empty;
             if (context.Request.RouteValues.TryGetValue("controller", out var objController))
@@ -62,12 +62,18 @@ namespace ExpenseManager.Api.Middlewares
             if (context.Request.ContentLength > 0
                     && (context.Request.Method == HttpMethods.Post || context.Request.Method == HttpMethods.Put))
             {
-                using var reader = new StreamReader(context.Request.Body);
-                var body = reader.ReadToEnd();
-                var jsonBody = JsonDocument.Parse(body);
-                if (jsonBody.RootElement.TryGetProperty("userId", out var bodyUserId))
+                context.Request.EnableBuffering();
+                using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+                var body = await reader.ReadToEndAsync();
+                context.Request.Body.Position = 0;
+                
+                if (!string.IsNullOrEmpty(body))
                 {
-                    return bodyUserId.ToString();
+                    var jsonBody = JsonDocument.Parse(body);
+                    if (jsonBody.RootElement.TryGetProperty("userId", out var bodyUserId))
+                    {
+                        return bodyUserId.ToString();
+                    }
                 }
             }
 
