@@ -1,5 +1,7 @@
-@page "/categories/createoredit/{Id?}"
+@page "/categories/createoredit/"
+@page "/categories/createoredit/{Id:int}"
 @using ExpenseManager.Shared.Models
+@using ExpenseManager.Web.Services.Interfaces
 
 <PageTitle>Category - Create/Edit</PageTitle>
 
@@ -7,7 +9,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <form class="mb-4">
+        <form class="mb-4" @onsubmit="SaveCategory">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control" id="title" @bind="categoryModel.Title" placeholder="Enter category title">
@@ -23,19 +25,3 @@
         </form>
     </div>
 </div>
-
-@code {
-    [Parameter]
-    public int? Id { get; set; }
-
-    private ExpenseCategoryModel categoryModel = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (Id.HasValue)
-        {
-            // Logic to fetch category by Id would go here
-            // categoryModel = await CategoryService.GetById(Id.Value);
-        }
-    }
-}

@@ -1,0 +1,58 @@
+@using ExpenseManager.Shared
+@typeparam T where T : class
+
+@if (PaginatedList != null && PaginatedList.TotalCount > 0)
+{
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <span class="me-2">Page size:</span>
+            <select class="form-select form-select-sm" style="width: 80px;" 
+                    @onchange="OnPageSizeChanged">
+                @foreach (var size in PageSizes)
+                {
+                    <option value="@size" selected="@(size == PaginatedList.PageSize)">@size</option>
+                }
+            </select>
+        </div>
+
+        <nav>
+            <ul class="pagination mb-0">
+                <li class="page-item @(PaginatedList.PageIndex == 1 ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => OnPageChanged(1)" disabled="@(PaginatedList.PageIndex == 1)">
+                        &laquo;
+                    </button>
+                </li>
+                <li class="page-item @(PaginatedList.PageIndex == 1 ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => OnPageChanged(PaginatedList.PageIndex - 1)" disabled="@(PaginatedList.PageIndex == 1)">
+                        &lsaquo;
+                    </button>
+                </li>
+
+                @for (int i = StartPage; i <= EndPage; i++)
+                {
+                    var pageNum = i;
+                    <li class="page-item @(i == PaginatedList.PageIndex ? "active" : "")">
+                        <button class="page-link" @onclick="() => OnPageChanged(pageNum)">@pageNum</button>
+                    </li>
+                }
+
+                <li class="page-item @(PaginatedList.PageIndex == TotalPages ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => OnPageChanged(PaginatedList.PageIndex + 1)" disabled="@(PaginatedList.PageIndex == TotalPages)">
+                        &rsaquo;
+                    </button>
+                </li>
+                <li class="page-item @(PaginatedList.PageIndex == TotalPages ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => OnPageChanged(TotalPages)" disabled="@(PaginatedList.PageIndex == TotalPages)">
+                        &raquo;
+                    </button>
+                </li>
+            </ul>
+        </nav>
+
+        <div>
+            Showing @((PaginatedList.PageIndex - 1) * PaginatedList.PageSize + 1) to 
+            @Math.Min(PaginatedList.PageIndex * PaginatedList.PageSize, PaginatedList.TotalCount) 
+            of @PaginatedList.TotalCount entries
+        </div>
+    </div>
+}
