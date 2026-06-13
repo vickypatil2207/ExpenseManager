@@ -1,26 +1,34 @@
-{ 
-    "version": "0.2.0", 
-    "compounds": [ 
-        { 
-            "name": "Run API + Blazor", 
-            "configurations": [ 
-                "Launch API", 
-                "Launch Blazor" 
-            ]
-        } 
-    ], 
-    "configurations": [ 
-        { 
-            "name": "Launch API", 
-            "type": "dotnet", 
-            "request": "launch", 
-            "projectPath": "${workspaceFolder}/ExpenseManager.Api/ExpenseManager.Api.csproj" 
-        }, 
-        { 
-            "name": "Launch Blazor", 
-            "type": "dotnet", 
-            "request": "launch", 
-            "projectPath": "${workspaceFolder}/ExpenseManager.Web/ExpenseManager.Web.csproj" 
-        } 
-    ] 
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "API (.NET)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/ExpenseManager.Api/bin/Debug/net10.0/ExpenseManager.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/ExpenseManager.Api",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5051"
+            },
+            "console": "internalConsole",
+            "logging": {
+                "moduleLoad": false
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "API + Web (Full Stack)",
+            "configurations": ["API (.NET)"],
+            "preLaunchTask": "build-web-and-run",
+            "stopAll": true
+        }
+    ]
 }
