@@ -23,5 +23,7 @@ builder.Services.AddHttpClient<ApiClient>((sp, client) =>
 
 // Register services
 builder.Services.AddScoped<IExpenseCategoryService, ExpenseCategoryService>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<IPaymentTypeService, PaymentTypeService>();
 
 await builder.Build().RunAsync();

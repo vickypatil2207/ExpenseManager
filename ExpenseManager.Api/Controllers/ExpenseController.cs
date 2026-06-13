@@ -24,7 +24,7 @@ namespace ExpenseManager.Api.Controllers
         {
             var result = await _expenseService.CreateExpense(expenseModel);
             if (result.Success)
-                Ok(result);
+                return Ok(result);
 
             return BadRequest(result);
         }
@@ -34,7 +34,7 @@ namespace ExpenseManager.Api.Controllers
         {
             var result = await _expenseService.UpdateExpense(id, expenseModel);
             if (result.Success)
-                Ok(result);
+                return Ok(result);
 
             return BadRequest(result);
         }
@@ -44,7 +44,7 @@ namespace ExpenseManager.Api.Controllers
         {
             var result = await _expenseService.DeleteExpense(id);
             if (result.Success)
-                Ok(result);
+                return Ok(result);
 
             return BadRequest(result);
         }
@@ -54,7 +54,7 @@ namespace ExpenseManager.Api.Controllers
         {
             var result = await _expenseService.GetExpenseById(id);
             if (result.Success)
-                Ok(result);
+                return Ok(result);
 
             return BadRequest(result);
         }
@@ -64,7 +64,7 @@ namespace ExpenseManager.Api.Controllers
         {
             var result = await _expenseService.SearchExpenses(userId, expenseSearchModel);
             if (result.Success)
-                Ok(result);
+                return Ok(result);
 
             return BadRequest(result);
         }
